@@ -40,13 +40,19 @@ App = {
     loader.show();
     content.hide();
 
+
+
     web3.eth.getCoinbase(function(err,account) {
 
+      
       if (err == null) {
         App.account = account;
         $("#accountAddress").html("Your Account :" + account);
       }
     });
+
+
+        
 
     App.contracts.Election.deployed().then(function(instance) {
 
@@ -54,17 +60,24 @@ App = {
       return electionInstance.candidatesCount();
 
     }).then(function(count) {
-      var canidatesResults = $("#canidatesResults");
-      canidatesResults.empty();
+      var candidatesResults = $("#candidatesResults");
+      candidatesResults.empty();
+      
 
-      for (var i=1; i <= electionInstance.candidatesCount(); i++) {
+
+      for (var i=1; i <= count; i++) {
         electionInstance.candidates(i).then(function(candidate) {
           var id = candidate[0];
           var name = candidate[1];
           var voteCount = candidate[2];
+          
 
-          var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>";
-          canidatesResults.append(candidateTemplate);
+          var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
+          candidatesResults.append(candidateTemplate);
+
+          // Render candidate ballot option
+          var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
+          candidatesSelect.append(candidateOption);
 
         });
       }
